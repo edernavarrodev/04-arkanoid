@@ -1,6 +1,6 @@
 # 02 - Destrucción de bloques con animación y puntaje
 
-**Estado:** Draft
+**Estado:** Approved
 **Depende de:** SPEC 01
 **Fecha:** 2026-09-03
 **Objetivo:** Al destruir un bloque se reproduce una animación de explosión (sin sonido) y se suma puntaje visible en pantalla que se acumula durante la partida.
