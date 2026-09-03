@@ -40,6 +40,11 @@ html, body {
   margin: 0;
 }
 
+#end-score {
+  font-size: 20px;
+  margin: 0;
+}
+
 #restart-btn {
   font-size: 18px;
   padding: 8px 24px;
