@@ -23,6 +23,9 @@ const BRICK_GAP = 8;
 const BRICK_OFFSET_TOP = 60;
 const BRICK_OFFSET_LEFT = ( CANVAS_W - ( BRICK_COLS * BRICK_W + ( BRICK_COLS - 1 ) * BRICK_GAP ) ) / 2;
 
+const ROW_COLORS = [ 'red', 'yellow', 'cyan', 'magenta', 'green' ];
+const BLOCK_SCORES = { red: 10, yellow: 20, cyan: 30, magenta: 40, green: 50, hotpink: 60, brown: 50 };
+
 let gameState = 'playing';
 let paddle;
 let ball;
@@ -65,12 +68,30 @@ function createBricks() {
         y: BRICK_OFFSET_TOP + row * ( BRICK_H + BRICK_GAP ),
         w: BRICK_W,
         h: BRICK_H,
+        type: ROW_COLORS[ row ],
         alive: true,
         exploding: false,
         explodeStart: null,
       } );
     }
   }
+
+  const indices = arr.map( ( _, i ) => i );
+  for ( let i = indices.length - 1; i > 0; i-- ) {
+    const j = Math.floor( Math.random() * ( i + 1 ) );
+    [ indices[ i ], indices[ j ] ] = [ indices[ j ], indices[ i ] ];
+  }
+  const grayIndices = indices.slice( 0, 3 );
+  const brownIndices = indices.slice( 3, 6 );
+  grayIndices.forEach( i => { arr[ i ].type = 'gray'; } );
+  brownIndices.forEach( i => { arr[ i ].type = 'brown'; } );
+
+  arr.forEach( brick => {
+    brick.breakable = brick.type !== 'gray';
+    brick.hitsRequired = brick.type === 'brown' ? 2 : brick.type === 'gray' ? Infinity : 1;
+    brick.hitsTaken = 0;
+  } );
+
   return arr;
 }
 
@@ -102,17 +123,19 @@ function draw() {
 
   bricks.forEach( brick => {
     if ( brick.alive ) {
-      drawSprite( ctx, 'block_gray', brick.x, brick.y, brick.w, brick.h );
+      const spriteName = brick.type === 'brown' && brick.hitsTaken === 1 ? 'block_wood_cracked' : 'block_' + ( brick.type === 'brown' ? 'wood' : brick.type );
+      drawSprite( ctx, spriteName, brick.x, brick.y, brick.w, brick.h );
     } else if ( brick.exploding ) {
+      const frames = EXPLOSION_FRAMES[ brick.type ] || EXPLOSION_FRAMES.gray;
       const elapsed = performance.now() - brick.explodeStart;
       if ( elapsed >= EXPLOSION_DURATION ) {
         brick.exploding = false;
       } else {
         const frameIndex = Math.min(
-          EXPLOSION_FRAMES.gray.length - 1,
-          Math.floor( ( elapsed / EXPLOSION_DURATION ) * EXPLOSION_FRAMES.gray.length )
+          frames.length - 1,
+          Math.floor( ( elapsed / EXPLOSION_DURATION ) * frames.length )
         );
-        drawFrame( ctx, EXPLOSION_FRAMES.gray[ frameIndex ], brick.x, brick.y, brick.w, brick.h );
+        drawFrame( ctx, frames[ frameIndex ], brick.x, brick.y, brick.w, brick.h );
       }
     }
   } );
@@ -175,10 +198,15 @@ function updateBall() {
   for ( const brick of bricks ) {
     if ( !brick.alive ) continue;
     if ( circleRectCollide( ball.x, ball.y, ball.radius, brick.x, brick.y, brick.w, brick.h ) ) {
-      brick.alive = false;
-      brick.exploding = true;
-      brick.explodeStart = performance.now();
-      score += 10;
+      if ( brick.breakable ) {
+        brick.hitsTaken++;
+        if ( brick.hitsTaken >= brick.hitsRequired ) {
+          brick.alive = false;
+          brick.exploding = true;
+          brick.explodeStart = performance.now();
+          score += BLOCK_SCORES[ brick.type ];
+        }
+      }
       const overlapLeft = ( ball.x + ball.radius ) - brick.x;
       const overlapRight = ( brick.x + brick.w ) - ( ball.x - ball.radius );
       const overlapTop = ( ball.y + ball.radius ) - brick.y;
@@ -189,7 +217,7 @@ function updateBall() {
       } else {
         ball.vy *= -1;
       }
-      if ( bricks.every( b => !b.alive ) ) {
+      if ( bricks.filter( b => b.breakable ).every( b => !b.alive ) ) {
         gameState = 'win';
         showEndScreen( '¡Ganaste!' );
       }
