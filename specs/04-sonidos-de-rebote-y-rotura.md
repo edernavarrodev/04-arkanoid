@@ -45,14 +45,14 @@ No introduce nuevas estructuras de datos de juego (bricks, score, etc. no cambia
 
 ## Criterios de aceptación
 
-- [ ] Al rebotar contra cualquier pared o la paleta se escucha `ball-bounce.mp3`.
-- [ ] Al golpear un bloque gris se escucha `ball-bounce.mp3` (nunca `break-sound.mp3`, ya que nunca se rompe).
-- [ ] Al dar el primer golpe a un bloque marrón (pasa a sprite agrietado) se escucha `ball-bounce.mp3`.
-- [ ] Al dar el segundo golpe a un bloque marrón (se destruye) se escucha `break-sound.mp3`, no `ball-bounce.mp3`.
-- [ ] Al destruir cualquier bloque de color (1 golpe) se escucha `break-sound.mp3`.
-- [ ] Dos sonidos disparados en frames cercanos (ej. dos bloques golpeados casi al mismo tiempo) se escuchan ambos, sin que uno corte al otro.
-- [ ] El volumen de ambos sonidos es moderado y consistente (no ensordecedor) en cada reproducción.
-- [ ] El resto del juego (física, puntaje, explosiones visuales) sigue funcionando igual que en SPEC 03.
+- [x] Al rebotar contra cualquier pared o la paleta se escucha `ball-bounce.mp3`.
+- [x] Al golpear un bloque gris se escucha `ball-bounce.mp3` (nunca `break-sound.mp3`, ya que nunca se rompe).
+- [x] Al dar el primer golpe a un bloque marrón (pasa a sprite agrietado) se escucha `ball-bounce.mp3`.
+- [x] Al dar el segundo golpe a un bloque marrón (se destruye) se escucha `break-sound.mp3`, no `ball-bounce.mp3`.
+- [x] Al destruir cualquier bloque de color (1 golpe) se escucha `break-sound.mp3`.
+- [x] Dos sonidos disparados en frames cercanos (ej. dos bloques golpeados casi al mismo tiempo) se escuchan ambos, sin que uno corte al otro.
+- [x] El volumen de ambos sonidos es moderado y consistente (no ensordecedor) en cada reproducción.
+- [x] El resto del juego (física, puntaje, explosiones visuales) sigue funcionando igual que en SPEC 03.
 
 ## Decisiones tomadas y descartadas
 
