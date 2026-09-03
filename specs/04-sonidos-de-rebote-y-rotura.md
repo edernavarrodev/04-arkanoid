@@ -1,6 +1,6 @@
 # 04 - Sonidos de rebote y rotura
 
-**Estado:** Draft
+**Estado:** Approved
 **Depende de:** SPEC 03
 **Fecha:** 2026-09-03
 **Objetivo:** Reproducir `ball-bounce.mp3` cuando la pelota rebota (paredes, paleta, bloque gris, primer golpe del marrón) y `break-sound.mp3` cuando un bloque se destruye del todo.
