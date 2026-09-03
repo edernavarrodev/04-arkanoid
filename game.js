@@ -34,6 +34,15 @@ let score = 0;
 
 const keys = { left: false, right: false };
 
+const bounceSound = new Audio( 'assets/sounds/ball-bounce.mp3' );
+const breakSound = new Audio( 'assets/sounds/break-sound.mp3' );
+
+function playSound( audio ) {
+  const clone = audio.cloneNode();
+  clone.volume = 0.1;
+  clone.play().catch( () => {} );
+}
+
 function launchBall() {
   if ( !ball.attached ) return;
   ball.attached = false;
@@ -176,14 +185,17 @@ function updateBall() {
   if ( ball.x - ball.radius < 0 ) {
     ball.x = ball.radius;
     ball.vx *= -1;
+    playSound( bounceSound );
   } else if ( ball.x + ball.radius > CANVAS_W ) {
     ball.x = CANVAS_W - ball.radius;
     ball.vx *= -1;
+    playSound( bounceSound );
   }
 
   if ( ball.y - ball.radius < 0 ) {
     ball.y = ball.radius;
     ball.vy *= -1;
+    playSound( bounceSound );
   }
 
   if ( ball.vy > 0 && circleRectCollide( ball.x, ball.y, ball.radius, paddle.x, paddle.y, paddle.w, paddle.h ) ) {
@@ -193,6 +205,7 @@ function updateBall() {
     const angle = hitPos * ( Math.PI / 3 );
     ball.vx = speed * Math.sin( angle );
     ball.vy = -speed * Math.cos( angle );
+    playSound( bounceSound );
   }
 
   for ( const brick of bricks ) {
@@ -205,7 +218,12 @@ function updateBall() {
           brick.exploding = true;
           brick.explodeStart = performance.now();
           score += BLOCK_SCORES[ brick.type ];
+          playSound( breakSound );
+        } else {
+          playSound( bounceSound );
         }
+      } else {
+        playSound( bounceSound );
       }
       const overlapLeft = ( ball.x + ball.radius ) - brick.x;
       const overlapRight = ( brick.x + brick.w ) - ( ball.x - ball.radius );

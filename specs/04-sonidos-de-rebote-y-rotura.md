@@ -1,6 +1,6 @@
 # 04 - Sonidos de rebote y rotura
 
-**Estado:** Approved
+**Estado:** Implemented
 **Depende de:** SPEC 03
 **Fecha:** 2026-09-03
 **Objetivo:** Reproducir `ball-bounce.mp3` cuando la pelota rebota (paredes, paleta, bloque gris, primer golpe del marrón) y `break-sound.mp3` cuando un bloque se destruye del todo.
@@ -15,7 +15,7 @@
   - el bloque marrón en su primer golpe (cuando pasa a sprite agrietado sin destruirse).
 - Sonido `assets/sounds/break-sound.mp3` solo cuando un bloque se destruye del todo (`alive` pasa a `false`): bloques de color en su único golpe, y bloque marrón en su segundo golpe.
 - Ambos sonidos pueden solaparse entre sí y consigo mismos (ej. dos bloques golpeados en frames cercanos) sin cortarse: se reproduce clonando el audio (`cloneNode`) en cada reproducción en vez de reusar una única instancia.
-- Volumen fijo moderado (`0.5`) para ambos sonidos, sin control de mute ni UI de volumen.
+- Volumen fijo moderado (`0.1`) para ambos sonidos, sin control de mute ni UI de volumen.
 - Carga de los sonidos vía `new Audio('assets/sounds/...')`, consumidos directamente por `game.js` sin bundlers (zero dependencies).
 
 **No incluye (fuera de este spec):**
@@ -31,11 +31,11 @@ No introduce nuevas estructuras de datos de juego (bricks, score, etc. no cambia
 
 - `bounceSound`: `Audio` apuntando a `assets/sounds/ball-bounce.mp3`.
 - `breakSound`: `Audio` apuntando a `assets/sounds/break-sound.mp3`.
-- Función `playSound(audio)`: clona el `Audio` (`audio.cloneNode()`), fija `volume = 0.5` y llama `.play()`, ignorando la promesa rechazada si el navegador bloquea el autoplay.
+- Función `playSound(audio)`: clona el `Audio` (`audio.cloneNode()`), fija `volume = 0.1` y llama `.play()`, ignorando la promesa rechazada si el navegador bloquea el autoplay.
 
 ## Plan de implementación
 
-1. En `game.js`: declarar `bounceSound = new Audio('assets/sounds/ball-bounce.mp3')` y `breakSound = new Audio('assets/sounds/break-sound.mp3')`, junto a una función `playSound(audio)` que clona, fija volumen `0.5` y reproduce (con `.catch(() => {})` para ignorar bloqueos de autoplay).
+1. En `game.js`: declarar `bounceSound = new Audio('assets/sounds/ball-bounce.mp3')` y `breakSound = new Audio('assets/sounds/break-sound.mp3')`, junto a una función `playSound(audio)` que clona, fija volumen `0.1` y reproduce (con `.catch(() => {})` para ignorar bloqueos de autoplay).
 2. En `updateBall()`, agregar `playSound(bounceSound)` en cada rebote de pared (izquierda, derecha, superior) y en el rebote contra la paleta.
 3. En el bloque de colisión bola-bloque de `updateBall()`:
    - Si `brick.breakable === false` (gris): agregar `playSound(bounceSound)` tras el rebote.
@@ -60,5 +60,5 @@ No introduce nuevas estructuras de datos de juego (bricks, score, etc. no cambia
 - **Bloque gris siempre reproduce rebote, nunca rotura:** consistente con SPEC 03, donde el gris es indestructible y solo rebota.
 - **Bloque marrón reproduce rebote en el 1er golpe y rotura en el 2do:** el usuario pidió explícitamente que el rebote suene "la primera vez del bloque marrón"; el segundo golpe lo destruye, por lo que corresponde el sonido de rotura en vez del de rebote.
 - **Mismo `break-sound.mp3` para todos los colores y para el marrón:** el usuario descartó sonido distinto por tipo de bloque; solo hay un archivo de rotura disponible en `assets/sounds/`.
-- **Volumen fijo `0.5`, sin UI de mute/volumen:** decisión explícita del usuario para mantener el alcance simple, sin agregar controles nuevos a `index.html`/`style.css`.
+- **Volumen fijo `0.1` (bajado de `0.5` inicial), sin UI de mute/volumen:** decisión explícita del usuario para mantener el alcance simple, sin agregar controles nuevos a `index.html`/`style.css`; el usuario reportó que `0.5` resultaba demasiado fuerte y perturbador.
 - **Sin manejo especial de autoplay policy más allá de `.catch()`:** el juego ya requiere una interacción del usuario (click o Space) para lanzar la bola, lo cual habilita el audio en la mayoría de navegadores; no se agrega un flujo dedicado de "activar sonido".
