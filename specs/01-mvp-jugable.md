@@ -1,6 +1,6 @@
 # 01 - MVP jugable de Arkanoid
 
-**Estado:** Aprobado
+**Estado:** Implementado
 **Depende de:** ninguno
 **Fecha:** 2026-09-03
 **Objetivo:** Crear un MVP jugable de Arkanoid con un nivel fijo, controlado por teclado, con estados Playing/GameOver/Win y botón de reinicio, sin sonido ni puntaje.
@@ -51,15 +51,15 @@ Sin persistencia. Estado en memoria (variables JS), no requiere estructuras seri
 
 ## Criterios de aceptación
 
-- [ ] Abrir `index.html` en un navegador muestra el canvas 800x600 con paleta, bola pegada a la paleta y grid de bloques visibles.
-- [ ] Flechas izquierda/derecha (o A/D) mueven la paleta sin salir del canvas.
-- [ ] Espacio o click lanza la bola desde la paleta.
-- [ ] La bola rebota correctamente en paredes laterales, techo y paleta.
-- [ ] Al golpear un bloque, este desaparece y la bola rebota.
-- [ ] Si la bola cae por debajo de la paleta, el juego pasa a estado Game Over y muestra overlay con botón de reinicio.
-- [ ] Al romper todos los bloques, el juego pasa a estado Win y muestra overlay con botón de reinicio.
-- [ ] El botón/tecla de reinicio devuelve el juego a estado inicial jugable sin recargar la página.
-- [ ] No hay dependencias externas ni build step: el juego corre abriendo `index.html` directo.
+- [x] Abrir `index.html` en un navegador muestra el canvas 800x600 con paleta, bola pegada a la paleta y grid de bloques visibles.
+- [x] Flechas izquierda/derecha (o A/D) mueven la paleta sin salir del canvas.
+- [x] Espacio o click lanza la bola desde la paleta.
+- [x] La bola rebota correctamente en paredes laterales, techo y paleta.
+- [x] Al golpear un bloque, este desaparece y la bola rebota.
+- [x] Si la bola cae por debajo de la paleta, el juego pasa a estado Game Over y muestra overlay con botón de reinicio.
+- [x] Al romper todos los bloques, el juego pasa a estado Win y muestra overlay con botón de reinicio.
+- [x] El botón/tecla de reinicio devuelve el juego a estado inicial jugable sin recargar la página.
+- [x] No hay dependencias externas ni build step: el juego corre abriendo `index.html` directo.
 
 ## Decisiones tomadas y descartadas
 
