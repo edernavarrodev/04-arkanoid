@@ -1,6 +1,6 @@
 # 01 - MVP jugable de Arkanoid
 
-**Estado:** Draft
+**Estado:** Aprobado
 **Depende de:** ninguno
 **Fecha:** 2026-09-03
 **Objetivo:** Crear un MVP jugable de Arkanoid con un nivel fijo, controlado por teclado, con estados Playing/GameOver/Win y botón de reinicio, sin sonido ni puntaje.
