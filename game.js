@@ -3,6 +3,7 @@ const ctx = canvas.getContext( '2d' );
 const endScreen = document.getElementById( 'end-screen' );
 const endMessage = document.getElementById( 'end-message' );
 const restartBtn = document.getElementById( 'restart-btn' );
+const endScoreEl = document.getElementById( 'end-score' );
 
 const CANVAS_W = canvas.width;
 const CANVAS_H = canvas.height;
@@ -26,6 +27,7 @@ let gameState = 'playing';
 let paddle;
 let ball;
 let bricks;
+let score = 0;
 
 const keys = { left: false, right: false };
 
@@ -64,6 +66,8 @@ function createBricks() {
         w: BRICK_W,
         h: BRICK_H,
         alive: true,
+        exploding: false,
+        explodeStart: null,
       } );
     }
   }
@@ -90,17 +94,36 @@ function resetGame() {
 
   bricks = createBricks();
   gameState = 'playing';
+  score = 0;
 }
 
 function draw() {
   ctx.clearRect( 0, 0, CANVAS_W, CANVAS_H );
 
   bricks.forEach( brick => {
-    if ( brick.alive ) drawSprite( ctx, 'block_gray', brick.x, brick.y, brick.w, brick.h );
+    if ( brick.alive ) {
+      drawSprite( ctx, 'block_gray', brick.x, brick.y, brick.w, brick.h );
+    } else if ( brick.exploding ) {
+      const elapsed = performance.now() - brick.explodeStart;
+      if ( elapsed >= EXPLOSION_DURATION ) {
+        brick.exploding = false;
+      } else {
+        const frameIndex = Math.min(
+          EXPLOSION_FRAMES.gray.length - 1,
+          Math.floor( ( elapsed / EXPLOSION_DURATION ) * EXPLOSION_FRAMES.gray.length )
+        );
+        drawFrame( ctx, EXPLOSION_FRAMES.gray[ frameIndex ], brick.x, brick.y, brick.w, brick.h );
+      }
+    }
   } );
 
   drawSprite( ctx, 'paddle', paddle.x, paddle.y, paddle.w, paddle.h );
   drawSprite( ctx, 'ball', ball.x - ball.radius, ball.y - ball.radius, ball.radius * 2, ball.radius * 2 );
+
+  ctx.fillStyle = '#fff';
+  ctx.font = '20px sans-serif';
+  ctx.textBaseline = 'top';
+  ctx.fillText( `Puntaje: ${ score }`, 10, 10 );
 }
 
 function circleRectCollide( cx, cy, r, rx, ry, rw, rh ) {
@@ -113,6 +136,7 @@ function circleRectCollide( cx, cy, r, rx, ry, rw, rh ) {
 
 function showEndScreen( message ) {
   endMessage.textContent = message;
+  endScoreEl.textContent = `Puntaje: ${ score }`;
   endScreen.classList.remove( 'hidden' );
 }
 
@@ -152,6 +176,9 @@ function updateBall() {
     if ( !brick.alive ) continue;
     if ( circleRectCollide( ball.x, ball.y, ball.radius, brick.x, brick.y, brick.w, brick.h ) ) {
       brick.alive = false;
+      brick.exploding = true;
+      brick.explodeStart = performance.now();
+      score += 10;
       const overlapLeft = ( ball.x + ball.radius ) - brick.x;
       const overlapRight = ( brick.x + brick.w ) - ( ball.x - ball.radius );
       const overlapTop = ( ball.y + ball.radius ) - brick.y;
